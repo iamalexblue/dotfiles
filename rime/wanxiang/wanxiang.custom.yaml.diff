@@ -1,0 +1,127 @@
+# Rime 万象拼音 翻页快捷键配置修改说明
+# 文件: ~/.config/ibus/rime/wanxiang.custom.yaml
+# 生成时间: 2026-04-30
+
+================================================================================
+修改概述
+================================================================================
+
+本次修改为 ~/.config/ibus/rime/wanxiang.custom.yaml 添加了完整的 key_binder 配置，
+覆盖默认的翻页快捷键设置，新增以下按键映射：
+
+  ，(comma)     -> Page_Up   (上翻)
+  。(period)    -> Page_Down (下翻)
+  ；(semicolon) -> Page_Up   (上翻)
+  '(apostrophe) -> Page_Down (下翻)
+  【(bracketleft)  -> Page_Up   (上翻)
+  】(bracketright) -> Page_Down (下翻)
+
+================================================================================
+详细 Diff
+================================================================================
+
+--- wanxiang.custom.yaml.orig
++++ wanxiang.custom.yaml
+@@ -8,10 +8,59 @@
+   #custom_phrase/user_dict: custom_phrasexx    # 这里改成什么就需要手动创建同名的 custom_phrasexx.txt 文件在用户目录，这个文件主要用于置顶，编码为自定义编码的词汇
+   #translator/packs/+:
+     #- userxx                                  #导入根目录下名称为userxx.dict.yaml的自定义固定词典，编码要与固定词库一致，编码权重都不要少，形如姓名、专有名词公司名称等等
+   #下面是候选数量
+-  menu/page_size: 6  #不要超过6，7890用于代表声调1234，6个管够你用了，如果你非要10个，不要问我😜。
++  menu/page_size: 5  #不要超过6，7890用于代表声调1234，6个管够你用了，如果你非要10个，不要问我😜。
+
++  # 下面是新增的 key_binder 配置
++  # 覆盖key_binder配置（同时适配标准key_binder和Lua key_binder）
++  key_binder:
++    shijian_keys: ["/", "o"]
++    bindings:
++    # 标准key_binder使用的翻页 bindings (send 字段)
++    # 翻页 - =
++      - { when: has_menu, accept: minus, send: Page_Up }
++      - { when: has_menu, accept: equal, send: Page_Down }
++    # 翻页 , .
++      - { when: has_menu, accept: comma, send: Page_Up }
++      - { when: has_menu, accept: period, send: Page_Down }
++    # 翻页 ; '
++      - { when: has_menu, accept: semicolon, send: Page_Up }
++      - { when: has_menu, accept: apostrophe, send: Page_Down }
++    # 翻页 【】
++      - { when: has_menu, accept: bracketleft, send: Page_Up }
++      - { when: has_menu, accept: bracketright, send: Page_Down }
++    # 其他快捷键 (从 wanxiang.schema.yaml 原有配置迁移)
++      - { when: always, toggle: ascii_punct, accept: Control+Shift+3 }
++      - { when: always, toggle: ascii_punct, accept: Control+Shift+numbersign }
++      - { when: always, toggle: s2t, accept: Control+Shift+4 }
++      - { when: always, toggle: s2t, accept: Control+Shift+dollar }
++      - { when: composing, accept: Alt+Left, send: Shift+Left }
++      - { when: composing, accept: Alt+Right, send: Shift+Right }
++      - { when: composing, accept: Control+w, send: Control+BackSpace }
++      - { when: has_menu, accept: Control+e, toggle: chinese_english}
++      - { when: has_menu, accept: Control+a, toggle: tone_hint }
++      - { when: has_menu, accept: Control+s, toggle: tone_display }
++      - { when: has_menu, accept: Control+t, toggle: super_tips }
++      - { when: has_menu, accept: Control+g, toggle: charset_filter }
++      - { when: composing, accept: Control+g, toggle: charset_filter }
++      - { when: always, accept: Shift+space, select: .next }
++      - { when: has_menu, accept: Tab, send: Control+Right }
++      - { when: composing, accept: Tab, send: Control+Right }
++      - { when: composing, accept: Control+Tab, send: Control+Home+Right+1+Control+Right }
++      - { match: "^/$", accept: "/", send: space }
++    # Lua key_binder使用的翻页 bindings (send_sequence + match 字段)
++    # 翻页 , .
++      - { match: ".*", accept: "comma", send_sequence: "Page_Up" }
++      - { match: ".*", accept: "period", send_sequence: "Page_Down" }
++    # 翻页 ; '
++      - { match: ".*", accept: "semicolon", send_sequence: "Page_Up" }
++      - { match: ".*", accept: "apostrophe", send_sequence: "Page_Down" }
++    # 翻页 【】
++      - { match: ".*", accept: "bracketleft", send_sequence: "Page_Up" }
++      - { match: ".*", accept: "bracketright", send_sequence: "Page_Down" }
++    # Lua key_binder 斜杠
++      - { match: "^/$", accept: "/", send_sequence: "space" }
+
+   #下面用来改变你的windows小狼毫右下角软件图标
+   #schema/+:
+   #  icon: "icons/zhong.ico"
+
+================================================================================
+技术说明
+================================================================================
+
+为什么需要同时配置两种格式？
+
+1. 标准 key_binder (Rime 内置):
+   - 使用 `send` 字段发送按键
+   - 使用 `when` 条件判断 (has_menu, composing, always)
+   - 配置中的 `- { when: has_menu, accept: comma, send: Page_Up }` 被此处理器读取
+
+2. Lua key_binder (万象拼音自定义):
+   - 使用 `send_sequence` + `match` 字段
+   - 使用正则表达式匹配输入码
+   - 读取 `key_binder/bindings` 列表中的 `match`, `accept`, `send_sequence`
+   - 配置中的 `- { match: ".*", accept: "comma", send_sequence: "Page_Up" }` 被此处理器读取
+
+万象拼音的 engine/processors 顺序:
+  1. lua_processor@*wanxiang.super_processor   <- 超级处理器
+  2. lua_processor@*wanxiang.user_predict*P    <- 预测
+  3. ...
+  7. key_binder                                 <- 标准按键绑定 (先处理)
+  8. lua_processor@*wanxiang.key_binder         <- Lua按键绑定 (后处理)
+
+Lua key_binder 在标准 key_binder 之后运行，但它只处理带有 `match` 字段的 bindings。
+由于 Lua key_binder 的 `parse()` 函数只识别 `send_sequence` 而非 `send`，
+所以万象拼音的自定义翻页 bindings 必须使用 `send_sequence` 格式。
+
+================================================================================
+恢复默认配置的方法
+================================================================================
+
+如果需要恢复默认配置，只需删除或注释掉新增的 key_binder 部分:
+
+  # 删除或注释掉以下内容:
+  # key_binder:
+  #   shijian_keys: ["/", "o"]
+  #   bindings:
+  #     ...
+
+================================================================================
