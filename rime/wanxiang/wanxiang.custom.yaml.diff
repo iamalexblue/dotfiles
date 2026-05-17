@@ -1,3 +1,44 @@
+万象拼音配置修改日志
+========================
+
+修改时间: 2026-05-04
+
+修改文件: ~/.config/ibus/rime/wanxiang.custom.yaml
+
+修改内容:
+---------
+将模糊音配置从「启用全部模糊音」改为「只启用 en-eng 和 in-ing 两个模糊音」
+
+修改前:
+  patch:
+    speller/algebra:
+      __patch:
+        - wanxiang_algebra:/模糊音               # 启用全部模糊音
+        - wanxiang_algebra:/base/小鹤双拼
+
+修改后:
+  patch:
+    speller/algebra:
+      __patch:
+        # 只启用 en-eng 和 in-ing 模糊音（小鹤双拼）
+        - wanxiang_algebra:/模糊音_en_eng
+        - wanxiang_algebra:/模糊音_in_ing
+        - wanxiang_algebra:/base/小鹤双拼
+
+修改原因:
+---------
+用户使用小鹤双拼，只需要 en-eng、in-ing 对应的模糊音，其他模糊音不需要
+
+修改方式:
+---------
+遵循万象拼音官方文档，通过 wanxiang.custom.yaml 的 patch 方式配置，而非直接修改 wanxiang_algebra.yaml，确保后续更新不会被覆盖
+
+生效方式:
+---------
+需要重新部署 Rime 才能生效
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # Rime 万象拼音 翻页快捷键配置修改说明
 # 文件: ~/.config/ibus/rime/wanxiang.custom.yaml
 # 生成时间: 2026-04-30
