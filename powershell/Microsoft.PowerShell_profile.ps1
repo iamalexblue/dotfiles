@@ -24,7 +24,7 @@ New-Alias -Name poff -Value proxy-off -Force
 # then launch the CLI.  hermesd opens the web UI.
 # ============================================================
 
-$hermesExe = "C:\Users\alexblue\AppData\Local\hermes\hermes-agent\venv\Scripts\hermes.exe"
+$hermesExe = Join-Path $env:LOCALAPPDATA "hermes\hermes-agent\venv\Scripts\hermes.exe"
 
 function global:hermes {
     $alive = Test-NetConnection -ComputerName 127.0.0.1 -Port 9119 `
