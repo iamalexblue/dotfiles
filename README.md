@@ -1,0 +1,135 @@
+<div align="center">
+
+```
+██████╗  ██████╗ ████████╗███████╗██╗     ██╗     ███████╗
+██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝██║     ██║     ██╔════╝
+██║  ██║██║   ██║   ██║   █████╗  ██║     ██║     █████╗
+██║  ██║██║   ██║   ██║   ██╔══╝  ██║     ██║     ██╔══╝
+██████╔╝╚██████╔╝   ██║   ██║     ███████╗███████╗███████╗
+╚═════╝  ╚═════╝    ╚═╝   ╚═╝     ╚══════╝╚══════╝╚══════╝
+
+```
+
+# dotflle
+
+**个人开发环境配置文件集 · Gruvbox 主题全家桶**
+
+一套配置，统一四端：终端、编辑器、输入法、Shell。
+
+[![editor](https://img.shields.io/badge/editor-neovim-98971A?style=flat-square&logo=neovim&logoColor=EBDBB2)](https://neovim.io)
+[![terminal](https://img.shields.io/badge/terminal-kitty-458588?style=flat-square&logo=kitty&logoColor=EBDBB2)](https://sw.kovidgoyal.net/kitty/)
+[![shell](https://img.shields.io/badge/shell-zsh-FE8019?style=flat-square&logo=gnubash&logoColor=EBDBB2)](https://www.zsh.org)
+[![ime](https://img.shields.io/badge/ime-rime-B16286?style=flat-square)](https://rime.im)
+[![theme](https://img.shields.io/badge/theme-gruvbox-CC241D?style=flat-square)](https://github.com/morhetz/gruvbox)
+[![manager](https://img.shields.io/badge/manager-lazy.nvim-D79921?style=flat-square)](https://github.com/folke/lazy.nvim)
+[![platform](https://img.shields.io/badge/platform-win%20%7C%20macOS%20%7C%20linux-928374?style=flat-square)]()
+
+</div>
+
+---
+
+## ✨ 特性
+
+- 🎨 **全链路 Gruvbox** —— 终端、编辑器配色高度统一，深色护眼
+- 📝 **Neovim 深度定制** —— lazy.nvim 管理 40+ 插件，模块化 `lua/realexblue/` 目录结构
+- 🀄 **Rime 万象输入法** —— 小鹤双拼 + 模糊音 + 自定义翻页键位
+- 🐱 **Kitty 终端** —— Gruvbox Material Dark Medium 主题，配色精细调校
+- 💻 **Zsh + Oh My Zsh** —— eastwood 主题，开箱即用的现代 Shell
+- 🔄 **随时同步** —— 配置改动即时回收到仓库，多设备保持一致
+
+## 📦 项目结构
+
+```
+dotflle/
+├── kitty config/          # Kitty 终端模拟器配置
+│   ├── kitty.conf             # 主配置
+│   ├── current-theme.conf     # Gruvbox Material Dark Medium 主题
+│   ├── dark-theme.auto.conf   # 自动深色主题
+│   └── colors.conf            # Gruvbox Dark 基础配色 (Gogh)
+├── nvim/                  # Neovim 配置
+│   ├── init.lua               # 入口
+│   ├── lazy-lock.json         # 插件版本锁
+│   ├── after/                 # LSP 扩展 (emmet / graphql / svelte)
+│   └── lua/realexblue/        # 模块化配置
+│       ├── core/              # 核心设置、快捷键、选项
+│       ├── lazy.lua           # lazy.nvim 引导
+│       ├── lsp.lua            # LSP 入口
+│       └── plugins/           # 按功能拆分的插件配置
+├── rime/                  # Rime 输入法配置
+│   └── wanxiang/              # 万象方案自定义 (小鹤双拼)
+├── zshconfig/             # Zsh 配置
+│   └── .zshrc                 # Oh My Zsh
+└── README.md              # 就是这个文件
+```
+
+## 🔧 组件详情
+
+### 📝 Neovim — `nvim/`
+
+基于 **lazy.nvim** 的模块化配置，每个插件一个文件，职责清晰、易于维护。
+
+| 类别 | 插件 |
+|------|------|
+| 🚀 启动页 | `alpha-nvim`（自定义 ASCII 艺术标题） |
+| 🎨 主题 | `gruvbox.nvim`（hard 对比度 · 强制深色） |
+| 🧩 补全 | `nvim-cmp` + `mason` + 完整 LSP（emmet / graphql / svelte） |
+| 🔍 搜索 | `telescope` · `todo-comments` |
+| 🗂️ UI | `bufferline` · `lualine` · `nvim-tree` · `dressing` · `which-key` · `indent-blankline` · `trouble` |
+| ✍️ 编辑 | `autopairs` · `surround` · `substitute` · `nvim-ts-autotag` · `vim-maximizer` · `flash` |
+| 🌳 语法 | `treesitter` + `text-objects` |
+| 🧹 质量 | `formatting` · `linting` |
+| 🔀 Git | `gitsigns` · `lazygit` |
+| 📈 效率 | `auto-session` · `undotree` · `symbols-outline` |
+| ⏱️ 追踪 | `wakatime`（自动时间统计） |
+| 🤖 AI | ChatGPT.nvim（预留，1Password 密钥管理） |
+
+### 🐱 Kitty — `kitty config/`
+
+- **Gruvbox Material Dark Medium** 主题（Sainnhe Park）
+- Gogh 生成的 Gruvbox Dark 基础色板，深色背景 `#282828` / 前景 `#EBDBB2`
+- 支持自动深色主题切换（`dark-theme.auto.conf`）
+
+### 🀄 Rime — `rime/wanxiang/`
+
+- **万象方案**自定义补丁（`wanxiang.custom.yaml`）
+- 双拼布局：**小鹤双拼**（可切换自然码 / 搜狗 / 微软等 11 种方案）
+- 模糊音：仅启用 `en-eng` / `in-ing`
+- 自定义键位：`-` `=` `,` `.` `;` `'` `【` `】` 翻页，`Ctrl+Shift+3/4` 切换中英文标点与简繁
+
+### 💻 Zsh — `zshconfig/`
+
+- Oh My Zsh + `eastwood` 主题
+- 中文注释的模块化配置：路径、补全、历史、别名
+
+## 🚀 快速开始
+
+> 仓库不含自动安装脚本，各组件按需复制/软链接到对应位置即可。
+
+```bash
+git clone git@github.com:iamalexblue/dotflle.git ~/.dotfiles
+```
+
+| 组件 | Windows | macOS / Linux |
+|------|---------|---------------|
+| Neovim | `%LOCALAPPDATA%\nvim` | `~/.config/nvim` |
+| Kitty | `%APPDATA%\kitty` | `~/.config/kitty` |
+| Rime | `%APPDATA%\Rime` | `~/Library/Rime` · `~/.config/ibus/rime` |
+| Zsh | （WSL/MSYS 下）`~/.zshrc` | `~/.zshrc` |
+
+## 🔄 维护与同步
+
+改完本机配置后，同步回仓库：
+
+```bash
+# 以 Neovim 为例
+cp -r "$LOCALAPPDATA/nvim/." nvim/     # Windows
+cp -r ~/.config/nvim/. nvim/           # macOS / Linux
+
+git add -A && git commit -m "chore(nvim): sync config" && git push
+```
+
+## 🙏 致谢
+
+- [Gruvbox](https://github.com/morhetz/gruvbox) — 贯穿全套配置的经典配色
+- [lazy.nvim](https://github.com/folke/lazy.nvim) — Neovim 插件管理
+- [WakaTime](https://wakatime.com) — 编程时间追踪
