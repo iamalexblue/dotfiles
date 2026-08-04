@@ -14,11 +14,13 @@
 
 **个人开发环境配置文件集 · Gruvbox 主题全家桶**
 
-一套配置，统一四端：终端、编辑器、输入法、Shell。
+一套配置，统一五端：终端、编辑器、输入法、Shell、提示符。
 
 [![editor](https://img.shields.io/badge/editor-neovim-98971A?style=flat-square&logo=neovim&logoColor=EBDBB2)](https://neovim.io)
 [![terminal](https://img.shields.io/badge/terminal-kitty-458588?style=flat-square&logo=kitty&logoColor=EBDBB2)](https://sw.kovidgoyal.net/kitty/)
 [![shell](https://img.shields.io/badge/shell-zsh-FE8019?style=flat-square&logo=gnubash&logoColor=EBDBB2)](https://www.zsh.org)
+[![powershell](https://img.shields.io/badge/powershell-458588?style=flat-square&logo=powershell&logoColor=EBDBB2)](https://github.com/PowerShell/PowerShell)
+[![prompt](https://img.shields.io/badge/prompt-starship-FB4934?style=flat-square&logo=starship&logoColor=EBDBB2)](https://starship.rs)
 [![ime](https://img.shields.io/badge/ime-rime-B16286?style=flat-square)](https://rime.im)
 [![theme](https://img.shields.io/badge/theme-gruvbox-CC241D?style=flat-square)](https://github.com/morhetz/gruvbox)
 [![manager](https://img.shields.io/badge/manager-lazy.nvim-D79921?style=flat-square)](https://github.com/folke/lazy.nvim)
@@ -33,6 +35,8 @@
 - 🎨 **全链路 Gruvbox** —— 终端、编辑器配色高度统一，深色护眼
 - 📝 **Neovim 深度定制** —— lazy.nvim 管理 40+ 插件，模块化 `lua/realexblue/` 目录结构
 - 🀄 **Rime 万象输入法** —— 小鹤双拼 + 模糊音 + 自定义翻页键位
+- 🚀 **Starship 提示符** —— Gruvbox 调色板 Powerline 风格，多语言版本一目了然
+- 🖥️ **PowerShell 增强** —— 代理一键开关、Hermes 快捷启动、Mac mini 显示控制
 - 🐱 **Kitty 终端** —— Gruvbox Material Dark Medium 主题，配色精细调校
 - 💻 **Zsh + Oh My Zsh** —— eastwood 主题，开箱即用的现代 Shell
 - 🔄 **随时同步** —— 配置改动即时回收到仓库，多设备保持一致
@@ -57,6 +61,10 @@ dotflle/
 │       └── plugins/           # 按功能拆分的插件配置
 ├── rime/                  # Rime 输入法配置
 │   └── wanxiang/              # 万象方案自定义 (小鹤双拼)
+├── starship/             # Starship 提示符配置
+│   └── starship.toml         # Gruvbox Powerline 风格
+├── powershell/           # PowerShell 配置
+│   └── Microsoft.PowerShell_profile.ps1   # $PROFILE
 ├── zshconfig/             # Zsh 配置
 │   └── .zshrc                 # Oh My Zsh
 └── README.md              # 就是这个文件
@@ -101,6 +109,18 @@ dotflle/
 - Oh My Zsh + `eastwood` 主题
 - 中文注释的模块化配置：路径、补全、历史、别名
 
+### 🚀 Starship — `starship/`
+
+- **Gruvbox 调色板** Powerline 风格提示符（`palette = 'gruvbox_dark'`）
+- 分段式布局：OS → 用户 → 目录 → Git → 语言版本（C/C++/Rust/Go/Node/Bun/PHP/Java/Kotlin/Haskell/Python）→ Docker/Conda → 时间
+- 常用目录图标替换（Documents / Downloads / Developer…）、Vim 模式字符提示
+
+### 🖥️ PowerShell — `powershell/`
+
+- `pon` / `poff` —— mihomo 代理一键开关
+- `hermes` / `hermesd`（`hd`）—— Hermes Agent 后台守护 + Web UI 启动
+- `smac` / `wmac` 系列 —— Mac mini 显示器休眠/唤醒 + deskflow 客户端重启
+
 ## 🚀 快速开始
 
 > 仓库不含自动安装脚本，各组件按需复制/软链接到对应位置即可。
@@ -113,6 +133,8 @@ git clone git@github.com:iamalexblue/dotflle.git ~/.dotfiles
 |------|---------|---------------|
 | Neovim | `%LOCALAPPDATA%\nvim` | `~/.config/nvim` |
 | Kitty | `%APPDATA%\kitty` | `~/.config/kitty` |
+| Starship | `%USERPROFILE%\.config\starship.toml` | `~/.config/starship.toml` |
+| PowerShell | `$PROFILE`（OneDrive\文档\WindowsPowerShell） | `~/.config/powershell/` |
 | Rime | `%APPDATA%\Rime` | `~/Library/Rime` · `~/.config/ibus/rime` |
 | Zsh | （WSL/MSYS 下）`~/.zshrc` | `~/.zshrc` |
 
