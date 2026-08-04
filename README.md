@@ -64,7 +64,9 @@ dotfile/
 ├── starship/             # Starship 提示符配置
 │   └── starship.toml         # Gruvbox Powerline 风格
 ├── powershell/           # PowerShell 配置
-│   └── Microsoft.PowerShell_profile.ps1   # $PROFILE
+│   ├── Microsoft.PowerShell_profile.ps1   # $PROFILE
+│   └── scripts/              # 独立脚本
+│       └── mac-mini.ps1         # Mac mini 显示器控制（smac/wmac）
 ├── zshconfig/             # Zsh 配置
 │   └── .zshrc                 # Oh My Zsh
 └── README.md              # 就是这个文件
@@ -120,6 +122,7 @@ dotfile/
 - `pon` / `poff` —— mihomo 代理一键开关
 - `hermes` / `hermesd`（`hd`）—— Hermes Agent 后台守护 + Web UI 启动
 - `smac` / `wmac` 系列 —— Mac mini 显示器休眠/唤醒 + deskflow 客户端重启
+- `scripts/mac-mini.ps1` —— smac/wmac 的独立脚本版（`.\mac-mini.ps1 wmac-full`，函数保留在 profile 中）
 
 ## 🚀 快速开始
 
