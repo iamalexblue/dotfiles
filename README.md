@@ -154,4 +154,5 @@ git add -A && git commit -m "chore(nvim): sync config" && git push
 
 - [Gruvbox](https://github.com/morhetz/gruvbox) — 贯穿全套配置的经典配色
 - [lazy.nvim](https://github.com/folke/lazy.nvim) — Neovim 插件管理
+- [dev-environment-files](https://github.com/josean-dev/dev-environment-files) — Neovim 配置的灵感来源，本仓库的 `lua/realexblue/` 即在其基础上按个人习惯定制
 - [WakaTime](https://wakatime.com) — 编程时间追踪
