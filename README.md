@@ -66,7 +66,8 @@ dotfile/
 ├── powershell/           # PowerShell 配置
 │   ├── Microsoft.PowerShell_profile.ps1   # $PROFILE
 │   └── scripts/              # 独立脚本
-│       └── mac-mini.ps1         # Mac mini 显示器控制（smac/wmac）
+│       ├── mac-mini.ps1         # Mac mini 显示器控制（smac/wmac）
+│       └── Add-StartMenuShortcuts.ps1    # 开始菜单快捷方式同步（sm-update）
 ├── zshconfig/             # Zsh 配置
 │   └── .zshrc                 # Oh My Zsh
 └── README.md              # 就是这个文件
@@ -123,6 +124,18 @@ dotfile/
 - `hermes` / `hermesd`（`hd`）—— Hermes Agent 后台守护 + Web UI 启动
 - `smac` / `wmac` 系列 —— Mac mini 显示器休眠/唤醒 + deskflow 客户端重启
 - `scripts/mac-mini.ps1` —— smac/wmac 的独立脚本版（`.\mac-mini.ps1 wmac-full`，函数保留在 profile 中）
+- `sm-update` —— 开始菜单快捷方式同步（`scripts/Add-StartMenuShortcuts.ps1`）：为 PowerToys CmdPal / Win 搜索补齐没有快捷方式的应用
+  
+  ```powershell
+  sm-update                 # 扫描注册表 Uninstall + 便携目录，补建快捷方式
+  sm-update -CleanVersion   # 去掉应用名里的版本号
+  sm-update -Prune          # 清理失效快捷方式
+  sm-update -Refresh        # 刷新 target 变化/失效的快捷方式
+  sm-update -WhatIf         # 演练模式（先预览）
+  sm-update -Help           # 查看完整用法
+  ```
+  
+  > 安全：脚本只【读】注册表 Uninstall 项，从不写注册表；全部改动仅在开始菜单文件夹。运行后用 `sm-update -Prune -WhatIf` 预览，再重启 explorer + PowerToys 刷新 CmdPal 索引。
 
 ## 🚀 快速开始
 
@@ -152,6 +165,19 @@ cp -r ~/.config/nvim/. nvim/           # macOS / Linux
 
 git add -A && git commit -m "chore(nvim): sync config" && git push
 ```
+
+```powershell
+# PowerShell：以本地 profile 为准，同步到仓库
+$localProf = $PROFILE
+$repoProf  = "D:\Dev\Fork\dotfiles\powershell\Microsoft.PowerShell_profile.ps1"
+Copy-Item $localProf $repoProf -Force                                    # 覆盖仓库 profile
+Copy-Item (Join-Path (Split-Path $PROFILE) "scripts\*.ps1") "D:\Dev\Fork\dotfiles\powershell\scripts\" -Force  # 同步独立脚本
+git -C "D:\Dev\Fork\dotfiles" add -A
+git -C "D:\Dev\Fork\dotfiles" commit -m "feat(powershell): sync profile"
+git -C "D:\Dev\Fork\dotfiles" push origin main
+```
+
+> 注意：仓库以**本地 profile 为准**做同步；新增脚本统一放进 `powershell/scripts/`，并在 README 的 PowerShell 小节补一行说明。
 
 ## 🙏 致谢
 
