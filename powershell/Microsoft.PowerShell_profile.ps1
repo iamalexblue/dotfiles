@@ -84,3 +84,23 @@ function wmac-full {
         Write-Host "[wmac-full] WARNING: deskflow not detected." -ForegroundColor Yellow
     }
 }
+
+# ============================================================
+# 开始菜单快捷方式同步 (sm-update)
+# 为 PowerToys CmdPal / Win 搜索补齐没有快捷方式的应用
+# 脚本: scripts\Add-StartMenuShortcuts.ps1
+#   sm-update            # 扫描注册表 Uninstall + 便携目录，补建快捷方式
+#   sm-update -CleanVersion  # 去掉应用名里的版本号
+#   sm-update -Prune     # 清理失效快捷方式
+#   sm-update -Refresh   # 刷新 target 变化的快捷方式
+#   sm-update -WhatIf    # 演练模式
+#   sm-update -Help      # 查看完整用法
+# ============================================================
+function global:sm-update {
+    $script = Join-Path (Split-Path $PROFILE) 'scripts\Add-StartMenuShortcuts.ps1'
+    if (-not (Test-Path -LiteralPath $script)) {
+        Write-Warning "找不到脚本: $script"
+        return
+    }
+    & $script @Args
+}
