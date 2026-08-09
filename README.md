@@ -1,13 +1,15 @@
 <div align="center">
 
-```
-██████╗  ██████╗ ████████╗███████╗██╗     ██╗     ███████╗
-██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝██║     ██║     ██╔════╝
-██║  ██║██║   ██║   ██║   █████╗  ██║     ██║     █████╗
-██║  ██║██║   ██║   ██║   ██╔══╝  ██║     ██║     ██╔══╝
-██████╔╝╚██████╔╝   ██║   ██║     ███████╗███████╗███████╗
-╚═════╝  ╚═════╝    ╚═╝   ╚═╝     ╚══════╝╚══════╝╚══════╝
-```
+<pre>
+╔═════════════════════════════════════════════════════════════════════════╗
+║  <span style="color:#FB4934">██████╗</span>  <span style="color:#FE8019"> ██████╗</span>  <span style="color:#FABD2F">████████╗</span>  <span style="color:#B8BB26">███████╗</span>  <span style="color:#8EC07C">██╗</span>  <span style="color:#83A598">██╗</span>  <span style="color:#D3869B">███████╗</span>  <span style="color:#EBDBB2">███████╗</span>       ║
+║  <span style="color:#FB4934">██╔══██╗</span>  <span style="color:#FE8019">██╔═══██╗</span>  <span style="color:#FABD2F">╚══██╔══╝</span>  <span style="color:#B8BB26">██╔════╝</span>  <span style="color:#8EC07C">██║</span>  <span style="color:#83A598">██║</span>  <span style="color:#D3869B">██╔════╝</span>  <span style="color:#EBDBB2">██╔════╝</span>  ║
+║  <span style="color:#FB4934">██║  ██║</span>  <span style="color:#FE8019">██║   ██║</span>  <span style="color:#FABD2F">   ██║   </span>  <span style="color:#B8BB26">█████╗  </span>  <span style="color:#8EC07C">██║</span>  <span style="color:#83A598">██║</span>  <span style="color:#D3869B">█████╗  </span>  <span style="color:#EBDBB2">███████╗</span>  ║
+║  <span style="color:#FB4934">██║  ██║</span>  <span style="color:#FE8019">██║   ██║</span>  <span style="color:#FABD2F">   ██║   </span>  <span style="color:#B8BB26">██╔══╝  </span>  <span style="color:#8EC07C">██║</span>  <span style="color:#83A598">██║</span>  <span style="color:#D3869B">██╔══╝  </span>  <span style="color:#EBDBB2">╚════██╗</span>  ║
+║  <span style="color:#FB4934">██████╔╝</span>  <span style="color:#FE8019">╚██████╔╝</span>  <span style="color:#FABD2F">   ██║   </span>  <span style="color:#B8BB26">██║</span>  <span style="color:#8EC07C">██║</span>  <span style="color:#83A598">███████╗</span>  <span style="color:#D3869B">███████╗</span>  <span style="color:#EBDBB2">███████╔╝</span>   ║
+║  <span style="color:#FB4934">╚═════╝</span>  <span style="color:#FE8019"> ╚═════╝</span>  <span style="color:#FABD2F">   ╚═╝   </span>  <span style="color:#B8BB26">╚═╝</span>  <span style="color:#8EC07C">╚═╝</span>  <span style="color:#83A598">╚══════╝</span>  <span style="color:#D3869B">╚══════╝</span>  <span style="color:#EBDBB2">╚══════╝</span>    ║
+╚═════════════════════════════════════════════════════════════════════════╝
+</pre>
 
 # dotfile
 
