@@ -63,9 +63,10 @@ dotfile/
 │       └── Add-StartMenuShortcuts.ps1    # 开始菜单快捷方式同步（sm-update）
 ├── sshconfig/            # SSH 客户端配置
 │   └── config                # ~/.ssh/config（仅连接配置，无密钥）
-├── scripts/              # 网络守护脚本（bash，部署于 orb-debian VM）
-│   ├── router-smart-reboot.sh   # 路由器智能重启检测（systemd timer 触发）
-│   └── net-stats.sh             # 网络守护状态总览（net-stats）
+├── scripts/              # 网络守护脚本（bash）
+│   ├── router-smart-reboot.sh   # 路由器智能重启检测（部署于 orb-debian VM）
+│   ├── net-stats.sh             # 网络守护状态总览（部署于 orb-debian VM）
+│   └── check_surge.sh           # DHCP 主备切换（部署于 iStoreOS 路由器）
 ├── zshconfig/             # Zsh 配置
 │   └── .zshrc                 # Oh My Zsh
 └── README.md              # 就是这个文件
@@ -140,10 +141,11 @@ dotfile/
 
 家庭网络自愈体系（部署于 mac mini 的 orb-debian VM，配套 iStoreOS 路由器）：
 
-- `router-smart-reboot.sh` —— **路由器智能重启**：systemd timer 每 3 分钟检测外网（阿里 223.5.5.5 / 腾讯 119.29.29.29 / 114 114.114.114.114），连续 2 次失败后全面确认，确认故障才 SSH 重启 iStoreOS；重启后 10 分钟冷却防连环重启；网关不可达时记日志提示人工。日志：`/var/log/router-smart-reboot.log`
-- `net-stats.sh` —— **状态总览**：Windows PowerShell / Linux zsh 输入 `net-stats`，一键查看智能重启（timer 状态、失败计数、冷却、日志）与 DHCP 主备切换（check_surge 状态、DHCP ignore、Surge 实时探测）
+- `router-smart-reboot.sh` —— **路由器智能重启**（部署于 orb-debian VM）：systemd timer 每 3 分钟检测外网（阿里 223.5.5.5 / 腾讯 119.29.29.29 / 114 114.114.114.114），连续 2 次失败后全面确认，确认故障才 SSH 重启 iStoreOS；重启后 10 分钟冷却防连环重启；网关不可达时记日志提示人工。日志：`/var/log/router-smart-reboot.log`
+- `net-stats.sh` —— **状态总览**（部署于 orb-debian VM）：Windows PowerShell / Linux zsh 输入 `net-stats`，一键查看智能重启（timer 状态、失败计数、冷却、日志）与 DHCP 主备切换（check_surge 状态、DHCP ignore、Surge 实时探测）
+- `check_surge.sh` —— **DHCP 主备切换**（部署于 iStoreOS 路由器 `/usr/bin/`，cron 每分钟执行）：探测 mac mini 的 Surge（10.10.10.10:6152），在线时关闭路由器 DHCP（`dhcp.lan.ignore=1`，由 Surge 接管分配）、离线时开启（备份模式），保证局域网 IP 分配永不中断
 
-> 配套：iStoreOS 路由器上的 `check_surge.sh`（DHCP 主备切换，mac mini Surge 在线时关闭路由器 DHCP、离线时接管，位于路由器 `/usr/bin/`）；zsh 端别名在 `zshconfig/.zshrc`。
+> 提示：zsh 端 `net-stats` 别名在 `zshconfig/.zshrc`；三个脚本的实际部署位置见各自说明。
 
 ### 🔐 SSH — `sshconfig/`
 
