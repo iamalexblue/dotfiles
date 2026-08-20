@@ -61,6 +61,8 @@ dotfile/
 │   └── scripts/              # 独立脚本
 │       ├── mac-mini.ps1         # Mac mini 显示器控制（smac/wmac）
 │       └── Add-StartMenuShortcuts.ps1    # 开始菜单快捷方式同步（sm-update）
+├── sshconfig/            # SSH 客户端配置
+│   └── config                # ~/.ssh/config（仅连接配置，无密钥）
 ├── scripts/              # 网络守护脚本（bash，部署于 orb-debian VM）
 │   ├── router-smart-reboot.sh   # 路由器智能重启检测（systemd timer 触发）
 │   └── net-stats.sh             # 网络守护状态总览（net-stats）
@@ -143,6 +145,11 @@ dotfile/
 
 > 配套：iStoreOS 路由器上的 `check_surge.sh`（DHCP 主备切换，mac mini Surge 在线时关闭路由器 DHCP、离线时接管，位于路由器 `/usr/bin/`）；zsh 端别名在 `zshconfig/.zshrc`。
 
+### 🔐 SSH — `sshconfig/`
+
+- `config` —— SSH 客户端连接配置（`~/.ssh/config`），当前含 `mac-mini` 主机（10.10.10.10）
+- **安全边界**：仓库 `.gitignore` 已排除私钥（`id_*`、`*.pem`、`*.key`）、`authorized_keys`、`known_hosts`、`1Password/` —— config 仅收录连接配置，不含任何凭据
+
 ## 🚀 快速开始
 
 > 仓库不含自动安装脚本，各组件按需复制/软链接到对应位置即可。
@@ -159,6 +166,7 @@ git clone git@github.com:iamalexblue/dotfiles.git ~/.dotfiles
 | PowerShell | `$PROFILE`（OneDrive\文档\WindowsPowerShell） | `~/.config/powershell/` |
 | Rime | `%APPDATA%\Rime` | `~/Library/Rime` · `~/.config/ibus/rime` |
 | Zsh | （WSL/MSYS 下）`~/.zshrc` | `~/.zshrc` |
+| SSH | `~/.ssh/config` | `~/.ssh/config` |
 
 ## 🔄 维护与同步
 

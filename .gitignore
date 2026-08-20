@@ -1,0 +1,24 @@
+# ============================================================
+# dotfiles 敏感文件防护 —— 以下内容永不入库
+# ============================================================
+
+# SSH 私钥与公钥
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.pem
+*.key
+
+# SSH 授权与指纹（含他人公钥 / 主机指纹，隐私相关）
+authorized_keys
+known_hosts
+known_hosts.old
+
+# 1Password SSH agent 集成
+1Password/
+
+# 本地备份/临时文件
+*.bak
+*.old
+*.tmp

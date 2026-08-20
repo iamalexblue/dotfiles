@@ -1,0 +1,3 @@
+Host mac-mini
+    HostName 10.10.10.10
+    User alexblue
