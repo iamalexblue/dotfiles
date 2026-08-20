@@ -29,6 +29,7 @@
 - 🀄 **Rime 万象输入法** —— 小鹤双拼 + 模糊音 + 自定义翻页键位
 - 🚀 **Starship 提示符** —— Gruvbox 调色板 Powerline 风格，多语言版本一目了然
 - 🖥️ **PowerShell 增强** —— 代理一键开关、Hermes 快捷启动、Mac mini 显示控制
+- 🛡️ **网络守护** —— 路由器智能重启 + 一键状态查看（net-stats）
 - 🐱 **Kitty 终端** —— Gruvbox Material Dark Medium 主题，配色精细调校
 - 💻 **Zsh + Oh My Zsh** —— eastwood 主题，开箱即用的现代 Shell
 - 🔄 **随时同步** —— 配置改动即时回收到仓库，多设备保持一致
@@ -60,6 +61,9 @@ dotfile/
 │   └── scripts/              # 独立脚本
 │       ├── mac-mini.ps1         # Mac mini 显示器控制（smac/wmac）
 │       └── Add-StartMenuShortcuts.ps1    # 开始菜单快捷方式同步（sm-update）
+├── scripts/              # 网络守护脚本（bash，部署于 orb-debian VM）
+│   ├── router-smart-reboot.sh   # 路由器智能重启检测（systemd timer 触发）
+│   └── net-stats.sh             # 网络守护状态总览（net-stats）
 ├── zshconfig/             # Zsh 配置
 │   └── .zshrc                 # Oh My Zsh
 └── README.md              # 就是这个文件
@@ -117,6 +121,7 @@ dotfile/
 - `smac` / `wmac` 系列 —— Mac mini 显示器休眠/唤醒 + deskflow 客户端重启
 - `scripts/mac-mini.ps1` —— smac/wmac 的独立脚本版（`.\mac-mini.ps1 wmac-full`，函数保留在 profile 中）
 - `sm-update` —— 开始菜单快捷方式同步（`scripts/Add-StartMenuShortcuts.ps1`）：为 PowerToys CmdPal / Win 搜索补齐没有快捷方式的应用
+- `net-stats` —— 网络守护状态一键查看（SSH → orb-debian VM 执行，见下方网络守护小节）
   
   ```powershell
   sm-update                 # 扫描注册表 Uninstall + 便携目录，补建快捷方式
@@ -128,6 +133,15 @@ dotfile/
   ```
   
   > 安全：脚本只【读】注册表 Uninstall 项，从不写注册表；全部改动仅在开始菜单文件夹。运行后用 `sm-update -Prune -WhatIf` 预览，再重启 explorer + PowerToys 刷新 CmdPal 索引。
+
+### 🛡️ 网络守护 — `scripts/`
+
+家庭网络自愈体系（部署于 mac mini 的 orb-debian VM，配套 iStoreOS 路由器）：
+
+- `router-smart-reboot.sh` —— **路由器智能重启**：systemd timer 每 3 分钟检测外网（阿里 223.5.5.5 / 腾讯 119.29.29.29 / 114 114.114.114.114），连续 2 次失败后全面确认，确认故障才 SSH 重启 iStoreOS；重启后 10 分钟冷却防连环重启；网关不可达时记日志提示人工。日志：`/var/log/router-smart-reboot.log`
+- `net-stats.sh` —— **状态总览**：Windows PowerShell / Linux zsh 输入 `net-stats`，一键查看智能重启（timer 状态、失败计数、冷却、日志）与 DHCP 主备切换（check_surge 状态、DHCP ignore、Surge 实时探测）
+
+> 配套：iStoreOS 路由器上的 `check_surge.sh`（DHCP 主备切换，mac mini Surge 在线时关闭路由器 DHCP、离线时接管，位于路由器 `/usr/bin/`）；zsh 端别名在 `zshconfig/.zshrc`。
 
 ## 🚀 快速开始
 

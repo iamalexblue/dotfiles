@@ -221,14 +221,14 @@ function smac {
 
 function wmac {
     ssh mac-mini "caffeinate -u -t 2"
-    ssh mac-mini "launchctl kickstart -k gui/501/com.deskflow.client"
+    ssh mac-mini "launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.deskflow.client.plist 2>/dev/null; launchctl kickstart -k gui/501/com.deskflow.client"
 }
 
 function wmac-v {
     Write-Host "[wmac-v] waking macOS display..." -ForegroundColor Cyan
     ssh mac-mini "caffeinate -u -t 2"
     Write-Host "[wmac-v] restarting deskflow client..." -ForegroundColor Cyan
-    ssh mac-mini "launchctl kickstart -k gui/501/com.deskflow.client"
+    ssh mac-mini "launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.deskflow.client.plist 2>/dev/null; launchctl kickstart -k gui/501/com.deskflow.client"
     Write-Host "[wmac-v] done." -ForegroundColor Green
 }
 
@@ -237,7 +237,7 @@ function wmac-full {
     ssh mac-mini "caffeinate -u -t 5"
     Start-Sleep -Seconds 2
     Write-Host "[wmac-full] restarting deskflow client..." -ForegroundColor Cyan
-    ssh mac-mini "launchctl kickstart -k gui/501/com.deskflow.client"
+    ssh mac-mini "launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.deskflow.client.plist 2>/dev/null; launchctl kickstart -k gui/501/com.deskflow.client"
     Start-Sleep -Seconds 3
 $out = ssh mac-mini "launchctl list | grep deskflow" 2>$null
     if ($LASTEXITCODE -eq 0 -and $out) {
@@ -261,4 +261,9 @@ function global:sm-update {
         return
     }
     & $script @Args
+}
+
+# net-stats: 查看网络守护脚本状态（路由器智能重启 + DHCP 主备切换）
+function net-stats {
+    ssh -o BatchMode=yes mac-mini '~/.orbstack/bin/orb -m orb-debian sh -c "net-stats"'
 }
