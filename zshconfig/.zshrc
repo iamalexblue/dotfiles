@@ -103,6 +103,13 @@ alias mlog='sudo journalctl -u mihomo -f | lnav -f /dev/stdin'
 alias mlog-last='sudo journalctl -u mihomo -n 50 --no-pager | lnav -f /dev/stdin'
 # ---------------------------------------------
 
+# ---------------------------------------------
+# net-stats: 查看网络守护状态（路由器智能重启 + DHCP 主备）
+# 依赖: ~/.ssh/config 已配置 mac-mini 主机 + SSH 公钥授权
+# 执行: ssh mac-mini -> orb-debian VM -> /usr/local/bin/net-stats
+alias net-stats='ssh -o BatchMode=yes mac-mini "~/.orbstack/bin/orb -m orb-debian sh -c \"net-stats\""'
+# ---------------------------------------------
+
 # bun completions
 [ -s "/home/realexblue/.bun/_bun" ] && source "/home/realexblue/.bun/_bun"
 
