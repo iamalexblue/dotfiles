@@ -125,6 +125,8 @@ dotfile/
 - `scripts/mac-mini.ps1` —— smac/wmac 的独立脚本版（`.\mac-mini.ps1 wmac-full`，函数保留在 profile 中）
 - `sm-update` —— 开始菜单快捷方式同步（`scripts/Add-StartMenuShortcuts.ps1`）：为 PowerToys CmdPal / Win 搜索补齐没有快捷方式的应用
 - `net-stats` —— 网络守护状态一键查看（SSH → orb-debian VM 执行，见下方网络守护小节）
+- `cd dload` / `cd dev` —— 目录快捷跳转（下载文件夹 / `D:\Dev\Fork` 开发目录；同名函数拦截 `cd` 别名实现）
+- `ps1edit` —— 用 nvim 打开当前 PowerShell 配置文件
   
   ```powershell
   sm-update                 # 扫描注册表 Uninstall + 便携目录，补建快捷方式

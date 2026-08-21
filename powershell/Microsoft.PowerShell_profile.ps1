@@ -171,29 +171,29 @@ function global:hermesd {
 
 New-Alias -Name hd -Value hermesd -Force
 
-# FlClash 崩溃快速修复
-function global:fix-clash {
-    Write-Host "=== FlClash 崩溃修复 ===" -ForegroundColor Cyan
-    # 先普通权限杀，杀不掉的无视
-    Get-Process -Name "FlClash", "FlClashCore" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-    # Helper 是系统服务，得用 gsudo 提权
-    gsudo taskkill /f /im FlClashHelperService.exe 2>$null
-    Start-Sleep -Seconds 1
-    $d = "$env:APPDATA\com.follow\clash"
+# # FlClash 崩溃快速修复
+# function global:fix-clash {
+#     Write-Host "=== FlClash 崩溃修复 ===" -ForegroundColor Cyan
+#     # 先普通权限杀，杀不掉的无视
+#     Get-Process -Name "FlClash", "FlClashCore" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+#     # Helper 是系统服务，得用 gsudo 提权
+#     gsudo taskkill /f /im FlClashHelperService.exe 2>$null
+#     Start-Sleep -Seconds 1
+#     $d = "$env:APPDATA\com.follow\clash"
 
-    # 轻量修复：只删缓存和锁
-    Write-Host "[轻量] 清理缓存和锁文件..."
-    Remove-Item "$d\cache.db", "$d\cache.db-wal", "$d\cache.db-shm", "$d\FlClash.lock" -Force -ErrorAction SilentlyContinue
-    Remove-Item "$d\temp\*" -Recurse -Force -ErrorAction SilentlyContinue
+#     # 轻量修复：只删缓存和锁
+#     Write-Host "[轻量] 清理缓存和锁文件..."
+#     Remove-Item "$d\cache.db", "$d\cache.db-wal", "$d\cache.db-shm", "$d\FlClash.lock" -Force -ErrorAction SilentlyContinue
+#     Remove-Item "$d\temp\*" -Recurse -Force -ErrorAction SilentlyContinue
 
-    # 深度修复：还不行的话删 config 和偏好，保留订阅
-    Write-Host "[深度] 重置运行配置（保留订阅/规则）..."
-    Remove-Item "$d\config.yaml", "$d\config.json", "$d\shared_preferences.json", "$d\database.sqlite" -Force -ErrorAction SilentlyContinue
-    Remove-Item "$d\database.sqlite-wal", "$d\database.sqlite-shm" -Force -ErrorAction SilentlyContinue
+#     # 深度修复：还不行的话删 config 和偏好，保留订阅
+#     Write-Host "[深度] 重置运行配置（保留订阅/规则）..."
+#     Remove-Item "$d\config.yaml", "$d\config.json", "$d\shared_preferences.json", "$d\database.sqlite" -Force -ErrorAction SilentlyContinue
+#     Remove-Item "$d\database.sqlite-wal", "$d\database.sqlite-shm" -Force -ErrorAction SilentlyContinue
 
-    Write-Host "修复完成，重新打开 FlClash 即可。" -ForegroundColor Green
-    Write-Host "提示：订阅和规则文件已保留，启动后会自动重建配置。" -ForegroundColor Yellow
-}
+#     Write-Host "修复完成，重新打开 FlClash 即可。" -ForegroundColor Green
+#     Write-Host "提示：订阅和规则文件已保留，启动后会自动重建配置。" -ForegroundColor Yellow
+# }
 function global:sudo { gsudo @Args }
 Remove-Alias -Name sudo -Force -ErrorAction SilentlyContinue
 
@@ -267,3 +267,29 @@ function global:sm-update {
 function net-stats {
     ssh -o BatchMode=yes mac-mini '~/.orbstack/bin/orb -m orb-debian sh -c "net-stats"'
 }
+
+# ==============================================================================
+# 8. 目录快捷跳转 & profile 编辑
+# ==============================================================================
+# cd 原本是 Set-Location 的别名，而 PowerShell 中别名优先级高于函数，
+# 所以要先移除别名，再定义同名函数拦截：dload=下载目录, dev=开发目录
+Remove-Alias -Name cd -Force -ErrorAction SilentlyContinue
+
+function cd {
+    param([Parameter(Position = 0)] [string] $Path)
+    switch ($Path) {
+        'dload' {
+            $dl = [Environment]::ExpandEnvironmentVariables(
+                (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders').'{374DE290-123F-4565-9164-39C4925E467B}')
+            Set-Location -LiteralPath $dl
+        }
+        'dev'   { Set-Location -LiteralPath 'D:\Dev\Fork' }
+        default {
+            if ([string]::IsNullOrEmpty($Path)) { Set-Location ~ }
+            else { Set-Location $Path }
+        }
+    }
+}
+
+# ps1edit: 用 nvim 打开当前 PowerShell 配置文件
+function ps1edit { nvim $PROFILE }
