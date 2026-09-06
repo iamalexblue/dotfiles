@@ -63,8 +63,11 @@ dotfile/
 │       └── Add-StartMenuShortcuts.ps1    # 开始菜单快捷方式同步（sm-update）
 ├── sshconfig/            # SSH 客户端配置
 │   └── config                # ~/.ssh/config（仅连接配置，无密钥）
-├── agents/               # Agent 写作风格 skill
-│   └── skills/blog-style-alex/   # 博客写作风格（SKILL.md）
+├── agents/               # Agent 记忆与写作风格 skill
+│   ├── AGENTS.md               # opencode 项目记忆
+│   ├── CLAUDE.md               # Claude Code 项目记忆（与 AGENTS.md 一致）
+│   └── skills/
+│       └── blog-style-alex/    # 博客写作风格 skill（SKILL.md）
 ├── scripts/              # 网络守护脚本（bash）
 │   ├── router-smart-reboot.sh   # 路由器智能重启检测（部署于 orb-debian VM）
 │   ├── net-stats.sh             # 网络守护状态总览（部署于 orb-debian VM）
@@ -156,10 +159,14 @@ dotfile/
 - `config` —— SSH 客户端连接配置（`~/.ssh/config`），当前含 `mac-mini` 主机（10.10.10.10）
 - **安全边界**：仓库 `.gitignore` 已排除私钥（`id_*`、`*.pem`、`*.key`）、`authorized_keys`、`known_hosts`、`1Password/` —— config 仅收录连接配置，不含任何凭据
 
-### 🤖 Agent Skills — `agents/`
+### 🤖 Agents — `agents/`
 
+- `AGENTS.md` —— opencode 项目记忆（仓库说明、同步流程、编码铁律）
+- `CLAUDE.md` —— Claude Code 项目记忆（与 AGENTS.md 内容一致）
 - `skills/blog-style-alex/SKILL.md` —— Alex 博客写作风格 skill（iamalex.blue 用）
-- 同步目标：`~/.agents/skills/`（各 Agent 共享的 skill 注册目录）
+- 同步目标：skill 同步到 `~/.agents/skills/`（各 Agent 共享的 skill 注册目录）
+
+> **注意**：AGENTS.md / CLAUDE.md 位于 `agents/` 子目录，Agent 默认只扫描项目根目录的话需手动配置加载路径。
 
 ## 🚀 快速开始
 
