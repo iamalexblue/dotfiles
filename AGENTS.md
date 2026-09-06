@@ -13,6 +13,7 @@ powershell/
 └── scripts/                           # 独立脚本（小写 scripts\）
     ├── mac-mini.ps1                   # smac/wmac Mac mini 显示器控制
     └── Add-StartMenuShortcuts.ps1     # sm-update 开始菜单快捷方式同步
+agents/skills/blog-style-alex/  # 博客写作风格 skill（同步到 ~/.agents/skills/）
 nvim/  rime/  starship/  zshconfig/  'kitty config/'
 ```
 
