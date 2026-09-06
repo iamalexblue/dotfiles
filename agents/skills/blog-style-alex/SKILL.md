@@ -1,6 +1,6 @@
 ---
 name: blog-style-alex
-version: 1.2.0
+version: 1.3.0
 description: |
   Alex（iamalex.blue）个人博客的写作风格 skill。当用户需要撰写、润色、续写博客文章（Blue_Wonderland / astro-theme-typography 博客，仓库 blue_wonderland），或总结折腾经历成博客时使用。触发词：写博客、润色文章、博客风格、按我的风格写、写篇折腾记。适用体裁：技术折腾记（tech 长文）、散文随笔（thoughts/life）、工具/软件推荐、经验总结。产出为 Markdown 正文 + frontmatter，遵循本 skill 的排版规范。不适用：Chat 短回复、小红书/推特短文。
 ---
@@ -47,7 +47,7 @@ draft: true   # 仅预览/未定稿时保留；确认发布后删掉这一行
 
 - `title`：必填。与正文 H1 一致（正文不写 `#` 标题，主题会用 title 渲染）。
 - `pubDate`：必填。`YYYY-MM-DD`（发布当天日期，无需时间部分）。
-- `categories`：必填。YAML 数组，4 空格缩进，每行 `- 词`。用「frontmatter categories 词表」中的既有词，别发明新分类。排序参考同主题文章（tech 文常见 `tech` 打头）。
+- `categories`：必填。YAML 数组，4 空格缩进，每行 `- 词`。**优先用「frontmatter categories 词表」中的既有词**；词表里确实没有贴合文章主旨的词时，可新建一个（词要朴素、与既有词风格一致）。**分类数量克制**：单篇通常 2-3 个、最多 4 个，别堆砌——两个词能说清就不用三个。排序参考同主题文章（tech 文常见 `tech` 打头）。
 - `description`：可选但建议写。一句话概括，列表卡片和 SEO 会显示。别把正文摘要整段粘进来。
 - `lastmod`：可选。改稿后更新时间，格式 `YYYY-MM-DDTHH:MM:SS.000Z`（带毫秒和 Z）。新建当天可省略，或用与 pubDate 相同的日期。
 - `draft`：可选。`true` 时 dev 模式可见、生产构建自动过滤。用户预览确认前保留，发布时删除。
@@ -68,7 +68,12 @@ draft: true   # 仅预览/未定稿时保留；确认发布后删掉这一行
 
 ## frontmatter categories 词表
 
-用既有词汇：`tech`、`tools`、`thoughts`、`life`、`homelab`、`devops`、`networking`、`monitoring`、`ai`、`gaming`、`productivity`、`open-source`、`social-media`、`journal`、`film`、`anime`、`podcast`、`ramblings`。tech 长文典型组合：`tech` + `tools`/`homelab`/`devops` + 领域词。
+既有词汇：`tech`、`tools`、`thoughts`、`life`、`homelab`、`devops`、`networking`、`monitoring`、`ai`、`gaming`、`productivity`、`open-source`、`social-media`、`journal`、`film`、`anime`、`podcast`、`ramblings`。
+
+**选词规则**：
+1. **优先从词表找**——覆盖绝大多数场景（tech 长文典型组合 `tech` + `tools`/`homelab`/`devops` + 领域词）。
+2. 词表里确实没有贴合文章主旨的，**可以新建**：词要朴素、单个英文小写词（如 `security`、`ai` 这类），与既有词风格一致。
+3. **数量克制**：单篇 2-3 个为主，最多不超过 4 个。两个词能说清就不用三个，避免堆砌稀释分类页的意义。
 
 ## 结构模板（tech 折腾记，参考 Homelab/CasaOS/MLX）
 
