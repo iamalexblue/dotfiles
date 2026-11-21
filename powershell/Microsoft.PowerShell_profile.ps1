@@ -140,6 +140,11 @@ function apoff {
 $hermesExe = Join-Path $env:LOCALAPPDATA "hermes\hermes-agent\venv\Scripts\hermes.exe"
 
 function global:hermes {
+    # update 命令：跳过 dashboard 自启，直接透传给 hermes 走更新流程
+    if ($Args.Count -gt 0 -and $Args[0] -eq 'update') {
+        & $hermesExe @Args
+        return
+    }
     $alive = Test-NetConnection -ComputerName 127.0.0.1 -Port 9119 `
         -InformationLevel Quiet `
         -WarningAction SilentlyContinue `
@@ -209,44 +214,133 @@ Import-Module gsudoModule
 Import-Module -Name Microsoft.WinGet.CommandNotFound
 #f45873b3-b655-43a6-b217-97c00aa0db58
 
-# ===== Mac mini display control (ported from Linux aliases) =====
-# smac      : blank macOS display, keep the system awake
-# wmac      : wake macOS display + restart deskflow client
-# wmac-v    : wmac with verbose output
-# wmac-full : full wake routine (wake + deskflow restart + verify)
-
-function smac {
-    ssh mac-mini "pmset displaysleepnow"
-}
-
-function wmac {
-    ssh mac-mini "caffeinate -u -t 2"
-    ssh mac-mini "launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.deskflow.client.plist 2>/dev/null; launchctl kickstart -k gui/501/com.deskflow.client"
-}
-
-function wmac-v {
-    Write-Host "[wmac-v] waking macOS display..." -ForegroundColor Cyan
-    ssh mac-mini "caffeinate -u -t 2"
-    Write-Host "[wmac-v] restarting deskflow client..." -ForegroundColor Cyan
-    ssh mac-mini "launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.deskflow.client.plist 2>/dev/null; launchctl kickstart -k gui/501/com.deskflow.client"
-    Write-Host "[wmac-v] done." -ForegroundColor Green
-}
-
-function wmac-full {
-    Write-Host "[wmac-full] waking macOS display..." -ForegroundColor Cyan
-    ssh mac-mini "caffeinate -u -t 5"
-    Start-Sleep -Seconds 2
-    Write-Host "[wmac-full] restarting deskflow client..." -ForegroundColor Cyan
-    ssh mac-mini "launchctl bootstrap gui/501 ~/Library/LaunchAgents/com.deskflow.client.plist 2>/dev/null; launchctl kickstart -k gui/501/com.deskflow.client"
-    Start-Sleep -Seconds 3
-$out = ssh mac-mini "launchctl list | grep deskflow" 2>$null
-    if ($LASTEXITCODE -eq 0 -and $out) {
-        Write-Host "[wmac-full] deskflow running: $out" -ForegroundColor Green
-    } else {
-        Write-Host "[wmac-full] WARNING: deskflow not detected." -ForegroundColor Yellow
+# ==============================================================================
+# Mac mini 控制（deskflow 主机）
+# 脚本本体: <profile>\Scripts\MacMiniControl.ps1
+#
+# 命名规则：mac 开头 + 动词。一条命令一件事。
+#   mac-wake      唤醒 Mac（点亮显示器 + 重启 deskflow）← 最常用
+#   mac-sleep     让 Mac 显示器睡眠（系统保持唤醒）
+#   mac-status    看一眼现状（显示器/deskflow/登录状态）
+#   mac-fix       只重启 deskflow，不碰显示器
+#   mac-doctor    出问题了跑这个，把输出发我
+#   mac-edit      用 nvim 打开脚本
+#   mac-help      打印用法（忘了命令叫啥就跑这个）
+#
+# 旧的 wmac / wmac-v / wmac-full / smac 已删除 —— 那三个只有 sleep 时长和日志多少不同，
+# 核心动作完全一样，现在统一成 mac-wake / mac-sleep。
+# ==============================================================================
+function Invoke-MacControl {
+    param([string]$MacAction)
+    $s = Join-Path (Split-Path $PROFILE) 'Scripts\MacMiniControl.ps1'
+    if (-not (Test-Path -LiteralPath $s)) {
+        Write-Warning "找不到脚本: $s"
+        return
     }
+    & $s -Action $MacAction @args
 }
 
+function global:mac-wake   { Invoke-MacControl 'wake' @args }
+function global:mac-sleep  { Invoke-MacControl 'sleep' @args }
+function global:mac-status { Invoke-MacControl 'status' @args }
+function global:mac-fix    { Invoke-MacControl 'deskflow' @args }
+function global:mac-doctor { Invoke-MacControl 'doctor' @args }
+
+function global:mac-edit { nvim (Join-Path (Split-Path $PROFILE) 'Scripts\MacMiniControl.ps1') }
+
+function global:Get-DisplayWidth {
+    # 东亚宽字符占 2 格，ASCII 占 1 格。PowerShell 的 -f / PadRight 只按字符数算，中文会错位。
+    param([string]$Text)
+    if ([string]::IsNullOrEmpty($Text)) { return 0 }
+    $total = 0
+    foreach ($ch in $Text.ToCharArray()) {
+        $cp = [int]$ch
+        $isWide = $false
+        if ($cp -ge 0x1100 -and $cp -le 0x115F) { $isWide = $true }
+        elseif ($cp -ge 0x2E80 -and $cp -le 0xA4CF) { $isWide = $true }
+        elseif ($cp -ge 0xAC00 -and $cp -le 0xD7A3) { $isWide = $true }
+        elseif ($cp -ge 0xF900 -and $cp -le 0xFAFF) { $isWide = $true }
+        elseif ($cp -ge 0xFE30 -and $cp -le 0xFE6F) { $isWide = $true }
+        elseif ($cp -ge 0xFF00 -and $cp -le 0xFF60) { $isWide = $true }
+        elseif ($cp -ge 0xFFE0 -and $cp -le 0xFFE6) { $isWide = $true }
+        if ($isWide) { $total = $total + 2 } else { $total = $total + 1 }
+    }
+    return $total
+}
+
+function global:Format-DisplayPad {
+    # 按“显示宽度”右补空格，而不是按字符数
+    param([string]$Text, [int]$Width)
+    $current = Get-DisplayWidth -Text $Text
+    $need = $Width - $current
+    if ($need -lt 0) { $need = 0 }
+    return ($Text + (' ' * $need))
+}
+
+function global:mac-help {
+    $cTitle = 'Cyan'; $cDim = 'DarkGray'; $cCmd = 'Green'; $cTag = 'DarkYellow'; $cEx = 'Gray'
+    $rule = '  ' + ('-' * 60)
+
+    Write-Host ''
+    Write-Host '  Mac mini 控制' -ForegroundColor $cTitle
+    Write-Host $rule -ForegroundColor $cDim
+
+    $rows = @(
+        @('mac-wake',   '唤醒 Mac：点亮显示器 + 重启 deskflow', '最常用'),
+        @('mac-sleep',  '让 Mac 显示器睡眠（系统保持唤醒）', ''),
+        @('mac-status', '查看现状：deskflow / 登录状态', ''),
+        @('mac-fix',    '只重启 deskflow，不碰显示器', ''),
+        @('mac-doctor', '完整体检，出问题先跑这个', '排障'),
+        @('mac-edit',   '用 nvim 打开控制脚本', ''),
+        @('mac-help',   '显示这份帮助', '')
+    )
+    foreach ($r in $rows) {
+        $name = Format-DisplayPad -Text $r[0] -Width 12
+        $desc = Format-DisplayPad -Text $r[1] -Width 40
+        $tail = ''
+        if ($r[2] -ne '') { $tail = '[ ' + $r[2] + ' ]' }
+        Write-Host ('   ' + $name) -ForegroundColor $cCmd -NoNewline
+        Write-Host ($desc) -NoNewline
+        if ($tail -ne '') { Write-Host $tail -ForegroundColor $cTag } else { Write-Host '' }
+    }
+
+    Write-Host ''
+    Write-Host '  通用参数（mac-wake / mac-sleep / mac-fix 都适用）' -ForegroundColor $cTitle
+    Write-Host $rule -ForegroundColor $cDim
+    $opts = @(
+        @('-WakeSeconds <秒>', 'caffeinate 唤醒持续秒数，默认 2'),
+        @('-Timeout <秒>',     'SSH 连接超时，默认 15'),
+        @('-SshHost <别名>',   'ssh config 里的主机名，默认 mac-mini'),
+        @('-Force',            '进程已在跑也强行走一遍重启'),
+        @('-DryRun',           '只打印将要发到远端的脚本，不真连')
+    )
+    foreach ($o in $opts) {
+        $opt = Format-DisplayPad -Text $o[0] -Width 20
+        Write-Host ('   ' + $opt + $o[1]) -ForegroundColor $cDim
+    }
+
+    Write-Host ''
+    Write-Host '  例子' -ForegroundColor $cTitle
+    Write-Host $rule -ForegroundColor $cDim
+    $examples = @(
+        'mac-wake                    # 日常，唤醒 + 重启 deskflow',
+        'mac-wake -WakeSeconds 10    # 屏幕太困，多唤一会儿',
+        'mac-status                  # 先看看现在什么情况',
+        'mac-doctor                  # 出问题了，体检'
+    )
+    foreach ($line in $examples) { Write-Host ('   ' + $line) -ForegroundColor $cEx }
+
+    Write-Host ''
+    Write-Host '  说明' -ForegroundColor $cTitle
+    Write-Host $rule -ForegroundColor $cDim
+    Write-Host '   脚本本体       <profile>\Scripts\MacMiniControl.ps1' -ForegroundColor $cDim
+    Write-Host '   SSH 免密       走 Keyguard agent，配置在 ~/.ssh/config' -ForegroundColor $cDim
+    Write-Host '   启动方式       Deskflow 1.27+ 用 launchctl submit' -ForegroundColor $cDim
+    Write-Host '                  （open -a 在 SSH 会话里会秒退）' -ForegroundColor $cDim
+    Write-Host ''
+}
+
+# 旧名字（wmac / wmac-v / wmac-full / smac）已移除，统一用上面的 mac-* 命令。
 # ==============================================================================
 # 开始菜单快捷方式同步（让 PowerToys CmdPal / Win 搜索能搜到没有快捷方式的应用）
 # 脚本位置: <profile>\Scripts\Add-StartMenuShortcuts.ps1
@@ -293,3 +387,6 @@ function cd {
 
 # ps1edit: 用 nvim 打开当前 PowerShell 配置文件
 function ps1edit { nvim $PROFILE }
+
+# sm-edit: 用 nvim 打开快捷方式同步脚本
+function sm-edit { nvim (Join-Path (Split-Path $PROFILE) 'Scripts\Add-StartMenuShortcuts.ps1') }

@@ -28,7 +28,7 @@
 - 📝 **Neovim 深度定制** —— lazy.nvim 管理 40+ 插件，模块化 `lua/realexblue/` 目录结构
 - 🀄 **Rime 万象输入法** —— 小鹤双拼 + 模糊音 + 自定义翻页键位
 - 🚀 **Starship 提示符** —— Gruvbox 调色板 Powerline 风格，多语言版本一目了然
-- 🖥️ **PowerShell 增强** —— 代理一键开关、Hermes 快捷启动、Mac mini 显示控制
+- 🖥️ **PowerShell 增强** —— 代理一键开关、Hermes 快捷启动、Mac mini 键鼠共享一键控制（mac-* 命令，Win/Linux 双端统一）
 - 🛡️ **网络守护** —— 路由器智能重启 + 一键状态查看（net-stats）
 - 🐱 **Kitty 终端** —— Gruvbox Material Dark Medium 主题，配色精细调校
 - 💻 **Zsh + Oh My Zsh** —— eastwood 主题，开箱即用的现代 Shell
@@ -59,7 +59,7 @@ dotfile/
 ├── powershell/           # PowerShell 配置
 │   ├── Microsoft.PowerShell_profile.ps1   # $PROFILE
 │   └── scripts/              # 独立脚本
-│       ├── mac-mini.ps1         # Mac mini 显示器控制（smac/wmac）
+│       ├── MacMiniControl.ps1   # Mac mini 控制引擎（wake/sleep/status/deskflow/doctor）
 │       └── Add-StartMenuShortcuts.ps1    # 开始菜单快捷方式同步（sm-update）
 ├── sshconfig/            # SSH 客户端配置
 │   └── config                # ~/.ssh/config（仅连接配置，无密钥）
@@ -73,7 +73,8 @@ dotfile/
 │   ├── net-stats.sh             # 网络守护状态总览（部署于 orb-debian VM）
 │   └── check_surge.sh           # DHCP 主备切换（部署于 iStoreOS 路由器）
 ├── zshconfig/             # Zsh 配置
-│   └── .zshrc                 # Oh My Zsh
+│   ├── .zshrc                 # Oh My Zsh
+│   └── mac-mini-control.zsh   # Mac mini 控制（mac-* 命令，与 Windows 版孪生）
 └── README.md              # 就是这个文件
 ```
 
@@ -115,6 +116,7 @@ dotfile/
 
 - Oh My Zsh + `eastwood` 主题
 - 中文注释的模块化配置：路径、补全、历史、别名
+- `mac-mini-control.zsh` —— Mac mini 控制脚本，部署到 `~/.config/zsh/` 后由 `.zshrc` 末尾 source 引入；命令与 Windows 端 mac-* 完全一致（`mac-wake` / `mac-sleep` / `mac-status` / `mac-fix` / `mac-doctor` / `mac-edit` / `mac-help`），支持 `--wake-seconds` / `--timeout` / `--ssh-host` / `--force` / `--dry-run` 长选项
 
 ### 🚀 Starship — `starship/`
 
@@ -126,8 +128,8 @@ dotfile/
 
 - `pon` / `poff` —— mihomo 代理一键开关
 - `hermes` / `hermesd`（`hd`）—— Hermes Agent 后台守护 + Web UI 启动
-- `smac` / `wmac` 系列 —— Mac mini 显示器休眠/唤醒 + deskflow 客户端重启
-- `scripts/mac-mini.ps1` —— smac/wmac 的独立脚本版（`.\mac-mini.ps1 wmac-full`，函数保留在 profile 中）
+- `mac-wake` / `mac-sleep` / `mac-status` / `mac-fix` / `mac-doctor` / `mac-edit` / `mac-help` —— Mac mini 一键控制：唤醒显示器并重启 deskflow、熄屏、状态体检（旧 `smac` / `wmac` 系列已删除，与 Linux zsh 端命令完全统一）
+- `scripts/MacMiniControl.ps1` —— mac-* 的远端执行引擎（`-Action wake|sleep|status|doctor|deskflow`，单次 SSH base64 下发远程 bash），profile 中的 mac-* 函数只是它的薄封装
 - `sm-update` —— 开始菜单快捷方式同步（`scripts/Add-StartMenuShortcuts.ps1`）：为 PowerToys CmdPal / Win 搜索补齐没有快捷方式的应用
 - `net-stats` —— 网络守护状态一键查看（SSH → orb-debian VM 执行，见下方网络守护小节）
 - `cd dload` / `cd dev` —— 目录快捷跳转（下载文件夹 / `D:\Dev\Fork` 开发目录；同名函数拦截 `cd` 别名实现）
@@ -158,6 +160,7 @@ dotfile/
 
 - `config` —— SSH 客户端连接配置（`~/.ssh/config`），当前含 `mac-mini` 主机（10.10.10.10）
 - **安全边界**：仓库 `.gitignore` 已排除私钥（`id_*`、`*.pem`、`*.key`）、`authorized_keys`、`known_hosts`、`1Password/` —— config 仅收录连接配置，不含任何凭据
+- 已知环境坑：openSUSE Tumbleweed 的 idmapped-mounts 会让全局 `/usr/etc/ssh/ssh_config.d/` 属主校验失败，`ssh` 直接报错退出；mac-* 脚本已内置 `ssh -F ~/.ssh/config` 绕过
 
 ### 🤖 Agents — `agents/`
 
@@ -184,6 +187,7 @@ git clone git@github.com:iamalexblue/dotfiles.git ~/.dotfiles
 | PowerShell | `$PROFILE`（OneDrive\文档\WindowsPowerShell） | `~/.config/powershell/` |
 | Rime | `%APPDATA%\Rime` | `~/Library/Rime` · `~/.config/ibus/rime` |
 | Zsh | （WSL/MSYS 下）`~/.zshrc` | `~/.zshrc` |
+| Zsh mac-* 脚本 | （Windows 用 PS 版） | `~/.config/zsh/mac-mini-control.zsh` |
 | SSH | `~/.ssh/config` | `~/.ssh/config` |
 
 ## 🔄 维护与同步
